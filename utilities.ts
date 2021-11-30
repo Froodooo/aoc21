@@ -15,3 +15,10 @@ export async function fetchInputData(
 
   return await response.text();
 }
+
+export async function writeInputData(
+  day: number,
+  inputData: string,
+): Promise<void> {
+  await Deno.writeTextFile(`./day${day}.txt`, inputData);
+}
