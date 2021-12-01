@@ -1,4 +1,5 @@
 # Run days
+
 For example, to run day 1:
 
 ```typescript
@@ -8,6 +9,7 @@ deno run --allow-read day1/day1b.ts
 ```
 
 # Run tests
+
 For example, to run day 1 tests:
 
 ```typescript
