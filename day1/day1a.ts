@@ -15,5 +15,5 @@ const input = await Deno.readTextFile("./day1/day1.txt");
 const measurements = input.split("\n").map((measurement) =>
   parseInt(measurement)
 );
-const increases = countIncreases(measurements);
-console.log(increases);
+
+console.log(countIncreases(measurements));
