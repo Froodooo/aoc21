@@ -1,5 +1,6 @@
 import { assertEquals } from "https://deno.land/std@0.116.0/testing/asserts.ts";
-import { Movement, readCourse, Submarine } from "./day2b.ts";
+import { Submarine } from "./day2b.ts";
+import { Movement, readCourse } from "./movement.ts";
 
 Deno.test("readCourse", () => {
   const rawMovements = ["forward 5"];

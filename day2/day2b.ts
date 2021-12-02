@@ -1,12 +1,4 @@
-export class Movement {
-  direction: string;
-  value: number;
-
-  constructor(direction: string, value: number) {
-    this.direction = direction;
-    this.value = value;
-  }
-}
+import { Movement, readCourse} from "./movement.ts";
 
 export class Submarine {
   horizontal_position: number;
@@ -36,13 +28,6 @@ export class Submarine {
         break;
     }
   }
-}
-
-export function readCourse(rawMovements: string[]): Movement[] {
-  return rawMovements.map((movement) => {
-    const movementList = movement.split(" ");
-    return new Movement(movementList[0], parseInt(movementList[1]));
-  });
 }
 
 const input = await Deno.readTextFile("./day2/day2.txt");
