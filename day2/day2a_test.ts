@@ -16,7 +16,7 @@ Deno.test("move", () => {
     new Movement("down", 5),
     new Movement("up", 2),
   ];
-  let submarine = new Submarine();
+  const submarine = new Submarine();
   movements.forEach((movement) => submarine.move(movement));
   assertEquals(submarine.horizontal_position, 5);
   assertEquals(submarine.depth, 3);
@@ -25,7 +25,7 @@ Deno.test("move", () => {
 Deno.test("Example 1", async () => {
   const testInput = await Deno.readTextFile("./day2/day2_ex.txt");
   const movements = readCourse(testInput.split("\n"));
-  let submarine = new Submarine();
+  const submarine = new Submarine();
   movements.forEach((movement) => submarine.move(movement));
   assertEquals(submarine.horizontal_position, 15);
   assertEquals(submarine.depth, 10);
@@ -34,7 +34,7 @@ Deno.test("Example 1", async () => {
 Deno.test("Day 1", async () => {
   const testInput = await Deno.readTextFile("./day2/day2.txt");
   const movements = readCourse(testInput.split("\n"));
-  let submarine = new Submarine();
+  const submarine = new Submarine();
   movements.forEach((movement) => submarine.move(movement));
   assertEquals(submarine.horizontal_position * submarine.depth, 2036120);
 });

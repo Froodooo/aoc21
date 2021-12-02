@@ -10,7 +10,7 @@ export class Movement {
 
 export function readCourse(rawMovements: string[]): Movement[] {
   return rawMovements.map((movement) => {
-    const movementList = movement.split(" ");
-    return new Movement(movementList[0], parseInt(movementList[1]));
+    const [direction, value] = movement.split(" ");
+    return new Movement(direction, parseInt(value));
   });
 }

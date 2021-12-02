@@ -1,4 +1,4 @@
-import { Movement, readCourse} from "./movement.ts";
+import { Movement, readCourse } from "./movement.ts";
 
 export class Submarine {
   horizontal_position: number;
@@ -31,7 +31,9 @@ export class Submarine {
 }
 
 const input = await Deno.readTextFile("./day2/day2.txt");
+
 const movements = readCourse(input.split("\n"));
-let submarine = new Submarine();
+const submarine = new Submarine();
 movements.forEach((movement) => submarine.move(movement));
+
 console.log(submarine.horizontal_position * submarine.depth);

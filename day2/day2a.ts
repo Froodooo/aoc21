@@ -28,7 +28,9 @@ export class Submarine {
 }
 
 const input = await Deno.readTextFile("./day2/day2.txt");
+
 const movements = readCourse(input.split("\n"));
-let submarine = new Submarine();
+const submarine = new Submarine();
 movements.forEach((movement) => submarine.move(movement));
+
 console.log(submarine.horizontal_position * submarine.depth);
