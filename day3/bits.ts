@@ -1,5 +1,5 @@
 export function countBits(binaryNumbers: string[]): number[] {
-  let positions = new Array(binaryNumbers[0].length).fill(0);
+  const positions = new Array(binaryNumbers[0].length).fill(0);
 
   binaryNumbers.forEach((binary) => {
     let number = parseInt(binary, 2);

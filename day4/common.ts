@@ -11,9 +11,11 @@ export function readBoards(input: string): Board[] {
   const lines = input.split("\n").filter((line) => line != "");
   const rawBoards = chunked(lines.slice(1), 5)
     .map((rawBoard) => {
-      let boardNumbers = [];
+      const boardNumbers = [];
       for (let i = 0; i < 5; i++) {
-        let boardLine = rawBoard[i].split(" ").filter((number) => number != "");
+        const boardLine = rawBoard[i].split(" ").filter((number) =>
+          number != ""
+        );
         for (let j = 0; j < 5; j++) {
           boardNumbers.push(
             new BoardNumber(parseInt(boardLine[j].trim()), j, i),

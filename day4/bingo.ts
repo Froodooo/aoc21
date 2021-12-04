@@ -1,5 +1,4 @@
 import { Board } from "./board.ts";
-import { BoardNumber } from "./board_number.ts";
 import { chunked } from "https://deno.land/std@0.106.0/collections/chunked.ts";
 
 export class Bingo {
@@ -22,9 +21,9 @@ export class Bingo {
     let finished = false;
     while (!finished || drawIndex == this.draw.length) {
       this.lastDraw = this.draw[drawIndex];
-      for (let board of this.boards) {
+      for (const board of this.boards) {
         this.sortBoardRows(board);
-        for (let number of board.numbers) {
+        for (const number of board.numbers) {
           if (number.value == this.lastDraw) {
             number.mark();
           }
@@ -72,7 +71,7 @@ export class Bingo {
   }
 
   private checkWinner(board: Board): boolean {
-    for (let chunk of chunked(board.numbers, 5)) {
+    for (const chunk of chunked(board.numbers, 5)) {
       if (chunk.every((number) => number.marked)) {
         return true;
       }
