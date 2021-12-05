@@ -4,7 +4,7 @@ import { visitPoints } from "./common.ts";
 Deno.test("Example 1", async () => {
   const input = await Deno.readTextFile("./day5/day5_ex.txt");
   const paths = input.split("\n");
-  const visitedPoints = visitPoints(paths, true);
+  const visitedPoints = visitPoints(paths, { skipDiagonals: true });
 
   const multipleOverlaps =
     [...visitedPoints.values()].filter((point) => point > 1).length;
@@ -14,7 +14,7 @@ Deno.test("Example 1", async () => {
 Deno.test("Day 5", async () => {
   const input = await Deno.readTextFile("./day5/day5.txt");
   const paths = input.split("\n");
-  const visitedPoints = visitPoints(paths, true);
+  const visitedPoints = visitPoints(paths, { skipDiagonals: true });
 
   const multipleOverlaps =
     [...visitedPoints.values()].filter((point) => point > 1).length;
