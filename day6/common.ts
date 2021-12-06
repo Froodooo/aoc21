@@ -1,5 +1,5 @@
-const INTERVAL: number = 6;
-const MAX_INTERVAL: number = 8;
+const INTERVAL = 6;
+const MAX_INTERVAL = 8;
 
 export function solve(input: string, days: number): number {
   const fish = input.split(",").map((f) => parseInt(f)).reduce(
