@@ -1,30 +1,17 @@
+import { Digit } from "./digit.ts";
+
 const input = await Deno.readTextFile("./day8/day8.txt");
-
-class Digit {
-  value: number;
-  segments: string[];
-  digitLength: number;
-
-  constructor(value: number, segments: string[]) {
-    this.value = value;
-    this.segments = segments;
-    this.digitLength = segments.length;
-  }
-
-  updateSegments(segments: string[]) {
-    this.segments = segments;
-  }
-}
 
 function findZero(
   signalPatterns: string[],
   sixDigit: Digit,
   nineDigit: Digit,
 ): Digit {
-  const pattern = signalPatterns.filter((pattern) =>
-    pattern !== sixDigit.segments.join("") &&
-    pattern !== nineDigit.segments.join("")
-  )[0].split("");
+  const pattern =
+    signalPatterns.find((pattern) =>
+      pattern !== sixDigit.segments.join("") &&
+      pattern !== nineDigit.segments.join("")
+    )?.split("") ?? [];
   return new Digit(0, pattern);
 }
 
@@ -33,63 +20,57 @@ function findTwo(
   threeDigit: Digit,
   fiveDigit: Digit,
 ): Digit {
-  const pattern = signalPatterns.filter((pattern) =>
-    pattern !== threeDigit.segments.join("") &&
-    pattern !== fiveDigit.segments.join("")
-  )[0].split("");
+  const pattern =
+    signalPatterns.find((pattern) =>
+      pattern !== threeDigit.segments.join("") &&
+      pattern !== fiveDigit.segments.join("")
+    )?.split("") ?? [];
   return new Digit(2, pattern);
 }
 
 function findThree(signalPatterns: string[], oneDigit: Digit): Digit {
-  const pattern = signalPatterns.filter((pattern) =>
-    pattern.includes(oneDigit.segments[0]) &&
-    pattern.includes(oneDigit.segments[1])
-  )[0].split("");
+  const pattern =
+    signalPatterns.find((pattern) =>
+      oneDigit.segments.every((segment) => pattern.includes(segment))
+    )?.split("") ?? [];
   return new Digit(3, pattern);
 }
 
 function findFive(signalPatterns: string[], sixDigit: Digit): Digit {
-  const pattern = signalPatterns.filter((pattern) => {
+  const pattern = signalPatterns.find((pattern) => {
     const countResult = sixDigit.segments.reduce((count, segment) => {
       return pattern.includes(segment) ? count + 1 : count;
     }, 0);
 
     return countResult === 5;
-  })[0].split("");
+  })?.split("") ?? [];
 
   return new Digit(5, pattern);
-  // const frequencies = segmentFrequencies(
-  //   signalPatterns.reduce((all, segment) => all + segment, ""),
-  // );
-  // const [uniqueSegment, _] = frequencies.filter(([_, count]) => count === 1)[0];
-  // const pattern = signalPatterns.filter((pattern) =>
-  //   pattern.includes(uniqueSegment)
-  // )[0].split("");
-  // return new Digit(5, pattern);
 }
 
 function findSix(signalPatterns: string[], sevenDigit: Digit): Digit {
-  const pattern = signalPatterns.filter((pattern) =>
-    !(pattern.includes(sevenDigit.segments[0]) &&
-      pattern.includes(sevenDigit.segments[1]) &&
-      pattern.includes(sevenDigit.segments[2]))
-  )[0].split("");
+  const pattern =
+    signalPatterns.find((pattern) =>
+      !(pattern.includes(sevenDigit.segments[0]) &&
+        pattern.includes(sevenDigit.segments[1]) &&
+        pattern.includes(sevenDigit.segments[2]))
+    )?.split("") ?? [];
 
   return new Digit(6, pattern);
 }
 
 function findNine(signalPatterns: string[], fourDigit: Digit): Digit {
-  const pattern = signalPatterns.filter((pattern) =>
-    pattern.includes(fourDigit.segments[0]) &&
-    pattern.includes(fourDigit.segments[1]) &&
-    pattern.includes(fourDigit.segments[2]) &&
-    pattern.includes(fourDigit.segments[3])
-  )[0].split("");
+  const pattern =
+    signalPatterns.find((pattern) =>
+      pattern.includes(fourDigit.segments[0]) &&
+      pattern.includes(fourDigit.segments[1]) &&
+      pattern.includes(fourDigit.segments[2]) &&
+      pattern.includes(fourDigit.segments[3])
+    )?.split("") ?? [];
 
   return new Digit(9, pattern);
 }
 
-// 2 3 5
 function findFiveSegmentDigits(
   signalPatterns: string[],
   simpleDigits: Digit[],
@@ -107,7 +88,6 @@ function findFiveSegmentDigits(
   return [two, three, five];
 }
 
-// 0 6 9
 function findSixSegmentDigits(
   signalPatterns: string[],
   simpleDigits: Digit[],
@@ -128,14 +108,10 @@ function findSixSegmentDigits(
 }
 
 function getSimpleDigits(signalPatterns: string[]): Digit[] {
-  const one = (signalPatterns.find((pattern) => pattern.length == 2) ?? "")
-    .split("");
-  const four = (signalPatterns.find((pattern) => pattern.length == 4) ?? "")
-    .split("");
-  const seven = (signalPatterns.find((pattern) => pattern.length == 3) ?? "")
-    .split("");
-  const eight = (signalPatterns.find((pattern) => pattern.length == 7) ?? "")
-    .split("");
+  const simpleDigitsLengths = [2, 4, 3, 7];
+  const [one, four, seven, eight] = simpleDigitsLengths.map((digit) =>
+    signalPatterns.find((pattern) => pattern.length == digit)?.split("") ?? []
+  );
 
   return [
     new Digit(1, one),
@@ -156,6 +132,15 @@ function equal(array1: string[], array2: string[]): boolean {
   return true;
 }
 
+function getOutputNumber(outputValues: string[][], digits: Digit[]): number {
+  const outputNumber = outputValues.map((value) => {
+    const digit = digits.find((digit) => equal(digit.segments, value));
+    return digit ? digit.value : "?";
+  }).join("");
+
+  return parseInt(outputNumber);
+}
+
 function outputValueNumber(entry: string[][]): number {
   const [signalPatterns, outputValue] = entry;
 
@@ -172,12 +157,10 @@ function outputValueNumber(entry: string[][]): number {
     sixSegmentDigits,
   );
 
-  const output = outputValue.map((value) => value.split("")).map((value) => {
-    const digit = allDigits.find((digit) => equal(digit.segments, value));
-    return digit ? digit.value : "?";
-  }).join("");
-
-  return parseInt(output);
+  return getOutputNumber(
+    outputValue.map((value) => value.split("")),
+    allDigits,
+  );
 }
 
 export function solve(input: string): number {

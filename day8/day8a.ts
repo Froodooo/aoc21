@@ -1,16 +1,6 @@
+import { Digit } from "./digit.ts";
+
 const input = await Deno.readTextFile("./day8/day8.txt");
-
-class Digit {
-  value: number;
-  segments: string[];
-  digitLength: number;
-
-  constructor(value: number, segments: string[]) {
-    this.value = value;
-    this.segments = segments;
-    this.digitLength = segments.length;
-  }
-}
 
 const digits: Digit[] = [
   new Digit(0, ["a", "b", "c", "e", "f", "g"]),
