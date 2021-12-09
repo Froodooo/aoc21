@@ -1,48 +1,7 @@
-const input = await Deno.readTextFile("./day9/day9_ex.txt");
+import { Point } from "./point.ts";
+import { neighbours } from "./constants.ts";
 
-class Point {
-  x: number;
-  y: number;
-  value: number;
-
-  constructor(x: number, y: number, value: number) {
-    this.x = x;
-    this.y = y;
-    this.value = value;
-  }
-
-  isSame(point: Point) {
-    return this.x === point.x && this.y === point.y;
-  }
-
-  isLower(point: Point) {
-    return this.x < point.x || this.y < point.y;
-  }
-
-  isHigher(point: Point) {
-    return this.x > point.x || this.y > point.y;
-  }
-
-  isOption(point: Point) {
-    return Math.abs(this.value - point.value) == 1;
-  }
-
-  withinMap(map: number[][]) {
-    return this.y < map.length && this.x < map[0].length && this.y >= 0 &&
-      this.x >= 0;
-  }
-
-  setValue(map: number[][]) {
-    this.value = map[this.y][this.x];
-  }
-}
-
-const neighbours = [
-  { x: -1, y: 0 },
-  { x: 1, y: 0 },
-  { x: 0, y: -1 },
-  { x: 0, y: 1 },
-];
+const input = await Deno.readTextFile("./day9/day9.txt");
 
 function readMap(input: string): number[][] {
   return input.split("\n").map((row) =>
@@ -64,11 +23,9 @@ function getBasin(
   for (let i = 0; i < neighbours.length; i++) {
     const neighbour = neighbours[i];
 
-    const neighbourX = point.x + neighbour.x;
-    const neighbourY = point.y + neighbour.y;
     const neighbourPoint = new Point(
-      neighbourX,
-      neighbourY,
+      point.x + neighbour.x,
+      point.y + neighbour.y,
       0,
     );
 
@@ -82,10 +39,7 @@ function getBasin(
       continue;
     }
 
-    if (
-      neighbourPoint.withinMap(map) && neighbourPoint.isOption(point) &&
-      !inBasin(basin, neighbourPoint)
-    ) {
+    if (neighbourPoint.isOption(point) && !inBasin(basin, neighbourPoint)) {
       basin = getBasin(basin, map, neighbourPoint);
     }
   }
@@ -96,17 +50,18 @@ function getBasin(
 function getBasins(map: number[][]): Point[][] {
   const basins = [];
 
-  for (let y = 1; y < map.length - 1; y++) {
-    for (let x = 1; x < map[y].length - 1; x++) {
-      if (map[y][x] === 9) {
+  for (let y = 0; y < map.length; y++) {
+    for (let x = 0; x < map[y].length; x++) {
+      const point = new Point(x, y, map[y][x]);
+
+      if (point.value === 9 || point.inBasin(basins)) {
         continue;
       }
 
-      const point = new Point(x, y, map[y][x]);
-      const basin = getBasin([], map, point);
-      basins.push(basin);
+      basins.push(getBasin([], map, point));
     }
   }
+
   return basins;
 }
 
@@ -114,7 +69,7 @@ export function solve(input: string): number {
   const map = readMap(input);
   const basins = getBasins(map);
   const sortedBasins = basins.sort((basin1, basin2) => {
-    return basin1.length < basin2.length ? 1 : -1;
+    return basin2.length - basin1.length;
   });
 
   sortedBasins.splice(3);
@@ -122,6 +77,7 @@ export function solve(input: string): number {
     (total, basin) => total * basin.length,
     1,
   );
+
   return multiple;
 }
 

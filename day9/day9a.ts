@@ -1,11 +1,6 @@
-const input = await Deno.readTextFile("./day9/day9.txt");
+import { neighbours } from "./constants.ts";
 
-const neighbours = [
-  { x: -1, y: 0 },
-  { x: 1, y: 0 },
-  { x: 0, y: -1 },
-  { x: 0, y: 1 },
-];
+const input = await Deno.readTextFile("./day9/day9.txt");
 
 function readMap(input: string): number[][] {
   return input.split("\n").map((row) =>
