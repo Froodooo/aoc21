@@ -1,4 +1,4 @@
-const input = await Deno.readTextFile("./day10/day10_ex.txt");
+const input = await Deno.readTextFile("./day10/day10.txt");
 
 const openCharacters = ["(", "[", "{", "<"];
 
@@ -61,13 +61,13 @@ function readIncompleteChunk(
 function calculatePoints(character: string): number {
   switch (character) {
     case ")":
-      return 3;
+      return 1;
     case "]":
-      return 57;
+      return 2;
     case "}":
-      return 1197;
+      return 3;
     case ">":
-      return 25137;
+      return 4;
     default:
       return 0;
   }
@@ -77,14 +77,11 @@ export function solve(input: string): number {
   const lines = input.split("\n").map((line) => line.split(""));
 
   const incompleteLines = lines.filter((line) => readChunk([...line], []) === undefined);
-  console.log(incompleteLines);
-  const closeCharacters = incompleteLines.map((line) => readIncompleteChunk(line, []));
-  // const points = closeCharacters.reduce(
-  //   (total, character) => total + calculatePoints(character),
-  //   0,
-  // );
+  const closeCharacterLines = incompleteLines.map((line) => readIncompleteChunk(line, []));
+  const points = closeCharacterLines.map((closeCharacters => closeCharacters.reduce((total, character) => total * 5 + calculatePoints(character), 0))).sort((a, b) => a - b);
+  const middleScore = points[Math.floor(points.length / 2)];
 
-  return 52;
+  return middleScore;
 }
 
 console.log(solve(input));
