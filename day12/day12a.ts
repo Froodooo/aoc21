@@ -1,6 +1,6 @@
 import { isLowerCase, Path, readGraph } from "./common.ts";
 
-const input = await Deno.readTextFile("./day12/day12_ex1.txt");
+const input = await Deno.readTextFile("./day12/day12_ex2.txt");
 
 function findPaths(
   graph: Map<string, Set<string>>,
