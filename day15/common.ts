@@ -20,10 +20,6 @@ export class Coordinate {
       this.y < cave.length;
   }
 
-  isStart() {
-    return this.x === 0 && this.y === 0;
-  }
-
   isFinish(cave: number[][]): boolean {
     return this.x === cave[0].length - 1 && this.y === cave.length - 1;
   }
@@ -36,18 +32,27 @@ const directions = [
   new Coordinate(0, 1),
 ];
 
+function initVisited(start: Coordinate): Set<string> {
+  const visited = new Set<string>();
+  visited.add(`${start.x},${start.y}`);
+
+  return visited;
+}
+
+function initQueue(start: Coordinate): BinaryHeap<queueElement> {
+  const heapSortFn = (a: queueElement, b: queueElement) => a.risk - b.risk;
+  const queue = new BinaryHeap<queueElement>(heapSortFn);
+  queue.push({ risk: 0, coordinate: start });
+
+  return queue;
+}
+
 export function findLowestRisk(
   start: Coordinate,
   cave: number[][],
 ): number {
-  const visited = new Set<string>();
-  visited.add(`${start.x},${start.y}`);
-
-  const queue = new BinaryHeap<queueElement>((
-    a: queueElement,
-    b: queueElement,
-  ) => a.risk - b.risk);
-  queue.push({ risk: 0, coordinate: start });
+  const visited = initVisited(start);
+  const queue = initQueue(start);
 
   while (!queue.isEmpty()) {
     const { risk: risk, coordinate: coordinate } = queue.pop()!;
@@ -74,7 +79,7 @@ export function findLowestRisk(
     }
   }
 
-  return -1;
+  throw new Error("No path found");
 }
 
 export function readCave(input: string): number[][] {
