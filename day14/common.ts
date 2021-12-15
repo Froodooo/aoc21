@@ -44,7 +44,7 @@ function step(
   rules: rules,
 ): [pairs, pairs] {
   let newPairCount = new Map<string, number>();
-  for (let [pair, count] of Array.from(pairCount.entries())) {
+  for (const [pair, count] of Array.from(pairCount.entries())) {
     const letter = rules.get(pair) ?? "";
 
     letterCount = stepLetterCount(letterCount, letter, count);
