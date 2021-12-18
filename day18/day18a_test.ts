@@ -30,8 +30,8 @@ Deno.test("explode", () => {
   assertEquals(node4.toString(), "[[3,[2,[8,0]]],[9,[5,[4,[3,2]]]]]");
 
   const node5 = buildTree([[3, [2, [8, 0]]], [9, [5, [4, [3, 2]]]]]);
-  explode(node4);
-  assertEquals(node4.toString(), "[[3,[2,[8,0]]],[9,[5,[7,0]]]]");
+  explode(node5);
+  assertEquals(node5.toString(), "[[3,[2,[8,0]]],[9,[5,[7,0]]]]");
 });
 
 Deno.test("split", () => {

@@ -10,8 +10,7 @@ export class Node {
   value: number | undefined;
 
   constructor() {
-    // https://stackoverflow.com/a/8084248
-    this.id = (Math.random() + 1).toString(36).substring(7);
+    this.id = crypto.randomUUID();
   }
 
   toString(): string {
@@ -46,7 +45,7 @@ function readSnailfishNumbers(input: string): Node[] {
   );
 }
 
-function findClosestLeft(node: Node): Node | null {
+function findClosestLeft(node: Node): Node | undefined {
   const visited = new Set<string>();
   visited.add(node.id);
   let found = false;
@@ -62,7 +61,7 @@ function findClosestLeft(node: Node): Node | null {
   }
 
   if (!found) {
-    return null;
+    return undefined;
   }
 
   while (node && node.right) {
@@ -72,7 +71,7 @@ function findClosestLeft(node: Node): Node | null {
   return node;
 }
 
-function findClosestRight(node: Node): Node | null {
+function findClosestRight(node: Node): Node | undefined {
   const visited = new Set<string>();
   visited.add(node.id);
   let found = false;
@@ -88,7 +87,7 @@ function findClosestRight(node: Node): Node | null {
   }
 
   if (!found) {
-    return null;
+    return undefined;
   }
 
   while (node && node.left) {
@@ -98,13 +97,13 @@ function findClosestRight(node: Node): Node | null {
   return node;
 }
 
-export function explode(root: Node, index: number = 0): boolean {
+export function explode(root: Node, index = 0): boolean {
   let exploded = false;
-  
+
   if (index === 4) {
     // console.log(root)
     if (root.left?.value !== undefined && root.right?.value !== undefined) {
-    const closestRight = findClosestRight(root);
+      const closestRight = findClosestRight(root);
       if (closestRight) {
         closestRight.value! += root.right?.value;
       }
@@ -148,7 +147,7 @@ function createSplit(node: Node) {
 export function split(root: Node): boolean {
   let splitted = false;
 
-  if (root.left?.value && root.left.value >= 10) {
+  if (!splitted && root.left?.value && root.left.value >= 10) {
     createSplit(root.left);
     splitted = true;
   }
@@ -173,6 +172,7 @@ function add(left: Node, right: Node): Node {
   const root = new Node();
   root.left = left;
   root.right = right;
+  root.value = undefined;
 
   left.parent = root;
   right.parent = root;
@@ -180,13 +180,12 @@ function add(left: Node, right: Node): Node {
   return root;
 }
 
-[[[[[3,0],[5,3]],[4,4]],[5,5]],[6,6]]
-
 export function solve(input: string): number {
   const trees = readSnailfishNumbers(input);
 
   let root = trees[0];
   for (let i = 1; i < trees.length; i++) {
+    // console.log('index', i)
     root = add(root, trees[i]);
     // console.log(root.toString())
 
@@ -195,10 +194,11 @@ export function solve(input: string): number {
       exploded = splitted = false;
 
       exploded = explode(root);
-      splitted = split(root);
+      splitted = exploded ? splitted : split(root);
+      // console.log({ exploded, splitted });
+      console.log(root.toString());
     } while (exploded || splitted);
   }
-  console.log(root.toString())
 
   return 42;
 }
