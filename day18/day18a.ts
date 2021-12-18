@@ -77,7 +77,7 @@ function findClosestRight(node: Node): Node | null {
   visited.add(node.id);
   let found = false;
 
-  while (node.parent)  {
+  while (node.parent) {
     node = node.parent;
     visited.add(node.id);
     if (node.right && !visited.has(node.right.id)) {
@@ -98,14 +98,16 @@ function findClosestRight(node: Node): Node | null {
   return node;
 }
 
-export function explode(root: Node, index: number = 0): Node {
+export function explode(root: Node, index: number = 0): boolean {
+  let exploded = false;
+  
   if (index === 4) {
-    if (root.left?.value && root.right?.value) {
-      console.log(root.left.value, root.right.value)
-      const closestRight = findClosestRight(root);
+    // console.log(root)
+    if (root.left?.value !== undefined && root.right?.value !== undefined) {
+    const closestRight = findClosestRight(root);
       if (closestRight) {
         closestRight.value! += root.right?.value;
-      } 
+      }
 
       const closestLeft = findClosestLeft(root);
       if (closestLeft) {
@@ -115,22 +117,88 @@ export function explode(root: Node, index: number = 0): Node {
       root.left = undefined;
       root.right = undefined;
       root.value = 0;
+
+      exploded = true;
     }
   }
 
-  if (root.left) {
-    explode(root.left, index + 1)
+  if (!exploded && root.left) {
+    exploded = explode(root.left, index + 1);
   }
 
-  if (root.right) {
-    explode(root.right, index + 1)
+  if (!exploded && root.right) {
+    exploded = explode(root.right, index + 1);
   }
+
+  return exploded;
+}
+
+function createSplit(node: Node) {
+  node.left = new Node();
+  node.left.value = Math.floor(node.value! / 2);
+  node.left.parent = node;
+
+  node.right = new Node();
+  node.right.value = Math.ceil(node.value! / 2);
+  node.right.parent = node;
+
+  node.value = undefined;
+}
+
+export function split(root: Node): boolean {
+  let splitted = false;
+
+  if (root.left?.value && root.left.value >= 10) {
+    createSplit(root.left);
+    splitted = true;
+  }
+
+  if (!splitted && root.right?.value && root.right.value >= 10) {
+    createSplit(root.right);
+    splitted = true;
+  }
+
+  if (!splitted && root.left) {
+    splitted = split(root.left);
+  }
+
+  if (!splitted && root.right) {
+    splitted = split(root.right);
+  }
+
+  return splitted;
+}
+
+function add(left: Node, right: Node): Node {
+  const root = new Node();
+  root.left = left;
+  root.right = right;
+
+  left.parent = root;
+  right.parent = root;
 
   return root;
 }
 
-function solve(input: string): number {
+[[[[[3,0],[5,3]],[4,4]],[5,5]],[6,6]]
+
+export function solve(input: string): number {
   const trees = readSnailfishNumbers(input);
+
+  let root = trees[0];
+  for (let i = 1; i < trees.length; i++) {
+    root = add(root, trees[i]);
+    // console.log(root.toString())
+
+    let exploded, splitted;
+    do {
+      exploded = splitted = false;
+
+      exploded = explode(root);
+      splitted = split(root);
+    } while (exploded || splitted);
+  }
+  console.log(root.toString())
 
   return 42;
 }

@@ -1,10 +1,5 @@
 import { assertEquals } from "https://deno.land/std@0.116.0/testing/asserts.ts";
-import { buildTree, explode } from "./day18a.ts";
-
-// Deno.test("Example 1", async () => {
-//   const input = await Deno.readTextFile("./day18/day18_ex.txt");
-//   assertEquals(true, true);
-// });
+import { buildTree, explode, solve, split } from "./day18a.ts";
 
 Deno.test("buildTree", () => {
   const list1 = [[[[[9, 8], 1], 2], 3], 4];
@@ -18,8 +13,43 @@ Deno.test("buildTree", () => {
 });
 
 Deno.test("explode", () => {
-  // assertEquals(explode(buildTree([[[[[9,8],1],2],3],4])).toString(), "[[[[0,9],2],3],4]")
-  // assertEquals(explode(buildTree([7,[6,[5,[4,[3,2]]]]])).toString(), "[7,[6,[5,[7,0]]]]")
-  // assertEquals(explode(buildTree([[6,[5,[4,[3,2]]]],1])).toString(), "[[6,[5,[7,0]]],3]")
-  assertEquals(explode(buildTree([[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]])).toString(), "[[3,[2,[8,0]]],[9,[5,[4,[3,2]]]]]")
+  const node1 = buildTree([[[[[9, 8], 1], 2], 3], 4]);
+  explode(node1);
+  assertEquals(node1.toString(), "[[[[0,9],2],3],4]");
+
+  const node2 = buildTree([7, [6, [5, [4, [3, 2]]]]]);
+  explode(node2);
+  assertEquals(node2.toString(), "[7,[6,[5,[7,0]]]]");
+
+  const node3 = buildTree([[6, [5, [4, [3, 2]]]], 1]);
+  explode(node3);
+  assertEquals(node3.toString(), "[[6,[5,[7,0]]],3]");
+
+  const node4 = buildTree([[3, [2, [1, [7, 3]]]], [6, [5, [4, [3, 2]]]]]);
+  explode(node4);
+  assertEquals(node4.toString(), "[[3,[2,[8,0]]],[9,[5,[4,[3,2]]]]]");
+
+  const node5 = buildTree([[3, [2, [8, 0]]], [9, [5, [4, [3, 2]]]]]);
+  explode(node4);
+  assertEquals(node4.toString(), "[[3,[2,[8,0]]],[9,[5,[7,0]]]]");
+});
+
+Deno.test("split", () => {
+  const node1 = buildTree([[[[0, 7], 4], [15, [0, 13]]], [1, 1]]);
+  split(node1);
+  assertEquals(node1.toString(), "[[[[0,7],4],[[7,8],[0,13]]],[1,1]]");
+
+  const node2 = buildTree([[[[0, 7], 4], [[7, 8], [0, 13]]], [1, 1]]);
+  split(node2);
+  assertEquals(node2.toString(), "[[[[0,7],4],[[7,8],[0,[6,7]]]],[1,1]]");
+});
+
+Deno.test("Example 1", () => {
+  const input = "[[[[4,3],4],4],[7,[[8,4],9]]]\n[1,1]";
+  solve(input);
+});
+
+Deno.test("Example 2", async () => {
+  const input = await Deno.readTextFile("./day18/day18_ex.txt");
+  solve(input);
 });
