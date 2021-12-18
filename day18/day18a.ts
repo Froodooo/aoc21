@@ -1,6 +1,6 @@
-type SnailfishNumber = any;
+type SnailfishNumber = number | number[] | SnailfishNumber[];
 
-const input = await Deno.readTextFile("./day18/day18_ex.txt");
+const input = await Deno.readTextFile("./day18/day18.txt");
 
 export class Node {
   id: string;
@@ -19,17 +19,24 @@ export class Node {
     }
     return `[${this.left?.toString()},${this.right?.toString()}]`;
   }
+
+  magnitude(): number {
+    if (Number.isInteger(this.value)) {
+      return this.value!;
+    }
+    return 3 * this.left?.magnitude()! + 2 * this.right?.magnitude()!;
+  }
 }
 
 export function buildTree(snailfishNumber: SnailfishNumber): Node {
   const root = new Node();
 
   if (Number.isInteger(snailfishNumber)) {
-    root.value = snailfishNumber;
+    root.value = snailfishNumber as unknown as number;
     return root;
   }
 
-  const [left, right] = snailfishNumber;
+  const [left, right] = snailfishNumber as number[][][][];
   root.left = buildTree(left);
   root.right = buildTree(right);
 
@@ -100,8 +107,7 @@ function findClosestRight(node: Node): Node | undefined {
 export function explode(root: Node, index = 0): boolean {
   let exploded = false;
 
-  if (index === 4) {
-    // console.log(root)
+  if (index >= 4) {
     if (root.left?.value !== undefined && root.right?.value !== undefined) {
       const closestRight = findClosestRight(root);
       if (closestRight) {
@@ -147,13 +153,8 @@ function createSplit(node: Node) {
 export function split(root: Node): boolean {
   let splitted = false;
 
-  if (!splitted && root.left?.value && root.left.value >= 10) {
-    createSplit(root.left);
-    splitted = true;
-  }
-
-  if (!splitted && root.right?.value && root.right.value >= 10) {
-    createSplit(root.right);
+  if (!splitted && root.value! >= 10) {
+    createSplit(root);
     splitted = true;
   }
 
@@ -170,6 +171,7 @@ export function split(root: Node): boolean {
 
 function add(left: Node, right: Node): Node {
   const root = new Node();
+
   root.left = left;
   root.right = right;
   root.value = undefined;
@@ -180,27 +182,26 @@ function add(left: Node, right: Node): Node {
   return root;
 }
 
+function reduce(root: Node) {
+  let exploded, splitted;
+  do {
+    exploded = splitted = false;
+
+    exploded = explode(root);
+    splitted = exploded ? splitted : split(root);
+  } while (exploded || splitted);
+}
+
 export function solve(input: string): number {
   const trees = readSnailfishNumbers(input);
 
   let root = trees[0];
   for (let i = 1; i < trees.length; i++) {
-    // console.log('index', i)
     root = add(root, trees[i]);
-    // console.log(root.toString())
-
-    let exploded, splitted;
-    do {
-      exploded = splitted = false;
-
-      exploded = explode(root);
-      splitted = exploded ? splitted : split(root);
-      // console.log({ exploded, splitted });
-      console.log(root.toString());
-    } while (exploded || splitted);
+    reduce(root);
   }
 
-  return 42;
+  return root.magnitude();
 }
 
 console.log(solve(input));

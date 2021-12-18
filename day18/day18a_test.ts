@@ -44,12 +44,15 @@ Deno.test("split", () => {
   assertEquals(node2.toString(), "[[[[0,7],4],[[7,8],[0,[6,7]]]],[1,1]]");
 });
 
-Deno.test("Example 1", () => {
-  const input = "[[[[4,3],4],4],[7,[[8,4],9]]]\n[1,1]";
-  solve(input);
+Deno.test("Examples", () => {
+  const input1 = "[[1,2],[[3,4],5]]";
+  assertEquals(solve(input1), 143);
+
+  const input2 = "[[[[0,7],4],[[7,8],[6,0]]],[8,1]]";
+  assertEquals(solve(input2), 1384);
 });
 
-Deno.test("Example 2", async () => {
+Deno.test("Example data", async () => {
   const input = await Deno.readTextFile("./day18/day18_ex.txt");
-  solve(input);
+  assertEquals(solve(input), 4140);
 });
