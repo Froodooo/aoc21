@@ -44,6 +44,29 @@ class Scanner {
     this.id = id;
     this.beaconPositions = beaconPositions;
   }
+
+  compare(scanner: Scanner) {
+    const map = new Map<string, number>();
+
+    for (const thisCoordinate of this.beaconPositions) {
+      for (const scannerCoordinate of scanner.beaconPositions) {
+        for (const orientation of scannerCoordinate.orientations()) {
+          const [dx, dy, dz] = [
+            orientation.x - thisCoordinate.x,
+            orientation.y - thisCoordinate.y,
+            orientation.z - thisCoordinate.z,
+          ];
+
+          const key = `${dx},${dy},${dz}`;
+          const value = map.get(key) ?? 0;
+          map.set(key, value + 1);
+        }
+      }
+    }
+
+    // const result = Array.from(map).filter(([_, value]) => value >= 2);
+    // return;
+  }
 }
 
 function readScanners(input: string): Scanner[] {
@@ -63,8 +86,11 @@ function readScanners(input: string): Scanner[] {
 function solve(input: string): number {
   const scanners = readScanners(input);
 
-  console.log(scanners[0].beaconPositions[0].orientations().length);
-  console.log(permutations(["x", "y", "z"]));
+  scanners[0].compare(scanners[1]);
+
+  // const orientations = scanners[0].beaconPositions[4].orientations();
+  // console.log(scanners[0].beaconPositions[4].orientations());
+  // console.log(permutations(["x", "y", "z"]));
   // console.log(scanners)
   return 42;
 }
