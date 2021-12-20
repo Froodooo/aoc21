@@ -12,11 +12,17 @@ const squareDelta = [
   [1, 1],
 ];
 
-function getSquareNumber([x, y]: number[], lightPixels: Set<string>) {
+function getSquareNumber(
+  [x, y]: number[],
+  lightPixels: Set<string>,
+  allLightsOn: boolean,
+) {
   const binaryArray = squareDelta.reduce((binary, [dx, dy]) => {
     const [neighbourX, neighbourY] = [x + dx, y + dy];
 
-    binary.push(lightPixels.has(`${neighbourX},${neighbourY}`) ? 1 : 0);
+    binary.push(
+      lightPixels.has(`${neighbourX},${neighbourY}`) !== allLightsOn ? 1 : 0,
+    );
     return binary;
   }, []);
 
@@ -68,20 +74,37 @@ export function readImageEnhancementAlgorithm(
 export function enhance(
   lightPixels: Set<string>,
   algorithm: string[],
-  dimensions: dimensions,
+  allLightsOn: boolean,
 ): Set<string> {
-  const { minX, minY, maxX, maxY } = dimensions;
+  const { minX, minY, maxX, maxY } = getDimensions(lightPixels);
 
   const newLightPixels = new Set<string>();
 
   for (let y = minY - 1; y <= maxY + 1; y++) {
     for (let x = minX - 1; x <= maxX + 1; x++) {
-      const squareNumber = getSquareNumber([x, y], lightPixels);
-      if (algorithm[squareNumber] === "#") {
+      const squareNumber = getSquareNumber([x, y], lightPixels, allLightsOn);
+      if (algorithm[squareNumber] === "#" === allLightsOn) {
         newLightPixels.add(`${x},${y}`);
       }
     }
   }
 
   return newLightPixels;
+}
+
+export function step(input: string, enhancements: number): number {
+  const sections = input.split("\n\n");
+
+  const imageEnhancementAlgorithm = readImageEnhancementAlgorithm(sections);
+  let lightPixels = readLightPixels(sections);
+
+  for (let i = 0; i < enhancements; i++) {
+    lightPixels = enhance(
+      new Set(Array.from(lightPixels)),
+      imageEnhancementAlgorithm,
+      i % 2 === 1, // all lights on in uneven steps
+    );
+  }
+
+  return lightPixels.size;
 }
