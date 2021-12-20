@@ -13,15 +13,15 @@ const squareDelta = [
 ];
 
 function getSquareNumber([x, y]: number[], lightPixels: Set<string>) {
-  return parseInt(
-    squareDelta.reduce((binary, [dx, dy]) => {
-      const [xx, yy] = [x + dx, y + dy];
+  const binaryArray = squareDelta.reduce((binary, [dx, dy]) => {
+    const [neighbourX, neighbourY] = [x + dx, y + dy];
 
-      binary.push(lightPixels.has(`${xx},${yy}`) ? 1 : 0);
-      return binary;
-    }, []).join(""),
-    2,
-  );
+    binary.push(lightPixels.has(`${neighbourX},${neighbourY}`) ? 1 : 0);
+    return binary;
+  }, []);
+
+  const binary = binaryArray.join("");
+  return parseInt(binary, 2);
 }
 
 export function getDimensions(lightPixels: Set<string>): dimensions {
