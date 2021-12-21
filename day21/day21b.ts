@@ -1,37 +1,38 @@
-const input = await Deno.readTextFile("./day21/day21_ex.txt");
+const input = await Deno.readTextFile("./day21/day21.txt");
 
 const memoized = new Map<string, number[]>();
 
-function play(game: number[]): number[] {
-  if (game[1] >= 21) {
+function play(
+  player1: number,
+  player2: number,
+  score1: number,
+  score2: number,
+): number[] {
+  if (score1 >= 21) {
     return [1, 0];
   }
 
-  if (game[3] >= 21) {
+  if (score2 >= 21) {
     return [0, 1];
   }
 
-  const key = game.join(",");
+  const key = `${player1},${player2},${score1},${score2}`;
 
-  if (memoized.has(key)) {
-    return memoized.get(key)!;
-  }
+  if (memoized.has(key)) return memoized.get(key)!;
 
   const scores = [0, 0];
 
-  for (let die1 of [1, 2, 3]) {
-    for (let die2 of [1, 2, 3]) {
-      for (let die3 of [1, 2, 3]) {
-        let newPosition = game[0] + die1 + die2 + die3;
+  for (const die1 of [1, 2, 3]) {
+    for (const die2 of [1, 2, 3]) {
+      for (const die3 of [1, 2, 3]) {
+        let newPosition = player1 + die1 + die2 + die3;
         newPosition = newPosition % 10 === 0 ? 10 : newPosition % 10;
-        const newScore = game[1] + newPosition;
+        const newScore = score1 + newPosition;
 
-        const newGame = [game[2], game[3], newPosition, newScore];
+        const winner = play(player2, newPosition, score2, newScore);
 
-        const winner = play(newGame);
-
-        scores[0] += winner[0];
-        scores[1] += winner[1];
+        scores[0] += winner[1];
+        scores[1] += winner[0];
       }
     }
   }
@@ -47,18 +48,16 @@ function readGame(input: string): number[] {
       /^Player (\d+) starting position: (\d+)$/,
     )!;
     acc.push(+position);
-    acc.push(0);
     return acc;
   }, []);
 }
 
-export function solve(_input: string): number {
-  const game = readGame(input);
+export function solve(input: string): number {
+  const [player1, player2] = readGame(input);
 
-  const result = play(game);
-  console.log(result);
+  const result = play(player1, player2, 0, 0);
 
-  return 42;
+  return Math.max(...result);
 }
 
 console.log(solve(input));
