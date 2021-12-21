@@ -2,18 +2,6 @@ const input = await Deno.readTextFile("./day21/day21_ex.txt");
 
 const memoized = new Map<string, number[]>();
 
-const delta = [
-  [1, 0, 1, 0],
-  [1, 0, 2, 0],
-  [1, 0, 3, 0],
-  [2, 0, 1, 0],
-  [2, 0, 2, 0],
-  [2, 0, 3, 0],
-  [3, 0, 1, 0],
-  [3, 0, 2, 0],
-  [3, 0, 3, 0],
-];
-
 function play(game: number[]): number[] {
   if (game[1] >= 21) {
     return [1, 0];
@@ -31,23 +19,21 @@ function play(game: number[]): number[] {
 
   const scores = [0, 0];
 
-  for (const d of delta) {
-    const newGame = [
-      game[0] + d[0],
-      game[1] + d[1],
-      game[2] + d[2],
-      game[3] + d[3],
-    ];
-    newGame[0] = newGame[0] % 10 === 0 ? 10 : newGame[0] % 10;
-    newGame[1] += newGame[0];
+  for (let die1 of [1, 2, 3]) {
+    for (let die2 of [1, 2, 3]) {
+      for (let die3 of [1, 2, 3]) {
+        let newPosition = game[0] + die1 + die2 + die3;
+        newPosition = newPosition % 10 === 0 ? 10 : newPosition % 10;
+        const newScore = game[1] + newPosition;
 
-    newGame[2] = newGame[2] % 10 === 0 ? 10 : newGame[2] % 10;
-    newGame[3] += newGame[2];
+        const newGame = [game[2], game[3], newPosition, newScore];
 
-    const winner = play(newGame);
+        const winner = play(newGame);
 
-    scores[0] += winner[0];
-    scores[1] += winner[1];
+        scores[0] += winner[0];
+        scores[1] += winner[1];
+      }
+    }
   }
 
   memoized.set(key, scores);
@@ -70,7 +56,7 @@ export function solve(_input: string): number {
   const game = readGame(input);
 
   const result = play(game);
-  console.log(result)
+  console.log(result);
 
   return 42;
 }
