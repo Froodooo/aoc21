@@ -62,14 +62,6 @@ export class Game {
     }
   }
 
-  private isFinished(): boolean {
-    return this.players.some((player) => player.isFinished());
-  }
-
-  // getWinners(): Player[] {
-  //   return this.players.filter((player) => player.isFinished());
-  // }
-
   getLosers(): Player[] {
     return this.players.filter((player) => player.score < 1000);
   }
